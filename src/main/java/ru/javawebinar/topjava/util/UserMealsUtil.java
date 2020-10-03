@@ -76,12 +76,6 @@ public class UserMealsUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<UserMealWithExcess> filteredByCyclesOptional2(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
-        for (int i = 0; i < meals.size(); i++) {
 
-        }
-        return userMealWithExcessList;
-    }
 
 }
