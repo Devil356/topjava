@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
@@ -77,11 +78,26 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByCyclesOptional2(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
-        for (int i = 0; i < meals.size(); i++) {
+        final Map<LocalDate, Integer> sumCaloriesPerDay = new HashMap<>();
+        final Map<LocalDate, AtomicBoolean> excededPerDay = new HashMap<>();
 
-        }
-        return userMealWithExcessList;
+        final List<UserMealWithExcess> mealWithExcesses = new ArrayList<>();
+
+        meals.forEach(userMeal -> {
+            AtomicBoolean wrapBoolean = excededPerDay.computeIfAbsent(userMeal.getDateTime().toLocalDate(), localDate -> new AtomicBoolean());
+            Integer dailyCalories = sumCaloriesPerDay.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), Integer::sum);
+            if (dailyCalories > caloriesPerDay) {
+                wrapBoolean.set(true);
+            }
+            if (TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime)) {
+                mealWithExcesses.add(createWithExceeded(userMeal, wrapBoolean));
+            }
+        });
+        return mealWithExcesses;
+    }
+
+    private static UserMealWithExcess createWithExceeded(UserMeal userMeal, AtomicBoolean wrapBoolean) {
+        return new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), wrapBoolean.get());
     }
 
 }
