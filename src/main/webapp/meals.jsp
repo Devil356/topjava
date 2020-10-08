@@ -16,7 +16,7 @@
             color: green;
         }
 
-        .exceeded {
+        .excess {
             color: red;
         }
     </style>
@@ -25,7 +25,7 @@
 <section>
     <h2><a href="index.html">Home</a></h2>
     <h3>Meal List</h3>
-    <hr>
+    <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
@@ -36,7 +36,7 @@
         </thead>
         <c:forEach items="${mealList}" var="meal">
             <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.model.MealTo"/>
-            <tr class="${meal.excess ? 'exceeded' : 'normal'}">
+            <tr class="${meal.excess ? 'excess' : 'normal'}">
             <tr>
                 <td>
                     <fmt:parseDate value="${meal.dateTime}" pattern="y-M-dd'T'H:m" var="parsedDate"/>
