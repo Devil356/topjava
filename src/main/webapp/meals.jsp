@@ -12,6 +12,16 @@
     <title>Meals</title>
 </head>
 <body>
+<table>
+    <c:forEach items="${mealList}" var="meal">
+<%--        <tr>--%>
+<%--            <td></td>--%>
+<%--            <td></td>--%>
+<%--            <td></td>--%>
+<%--        </tr>--%>
+        <p>${meal}</p>
+    </c:forEach>
+</table>
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Users</h2>
