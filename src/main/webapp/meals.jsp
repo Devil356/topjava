@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-    <title>Meal List</title>
+    <title>Meal list</title>
     <style>
         .normal {
             color: green;
@@ -17,9 +17,9 @@
 </head>
 <body>
 <section>
-    <h2><a href="index.html">Home</a></h2>
+    <h3><a href="index.html">Home</a></h3>
     <hr/>
-    <h3>Meal List</h3>
+    <h2>Meals</h2>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
@@ -29,9 +29,8 @@
         </tr>
         </thead>
         <c:forEach items="${meals}" var="meal">
-            <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.model.MealTo"/>
+            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
-            <tr>
                 <td>
                     <fmt:parseDate value="${meal.dateTime}" pattern="y-M-dd'T'H:m" var="parsedDate"/>
                     <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm"/>
