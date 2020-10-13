@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.reverseOrder;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class InMemoryMealRepository implements MealRepository {
@@ -34,7 +36,7 @@ public class InMemoryMealRepository implements MealRepository {
         try {
             Meal oldMeal = repository.get(meal.getId());
             if (oldMeal.getUserId().equals(userId)) {
-                return repository.compute(meal.getId(), (id, oldMeal1)->meal);
+                return repository.compute(meal.getId(), (id, oldMeal1) -> meal);
             } else {
                 log.info("#save: Authentication failed");
                 return null;
@@ -68,6 +70,7 @@ public class InMemoryMealRepository implements MealRepository {
     public Collection<Meal> getAll(int userId) {
         return repository.values().stream()
                 .filter(meal -> meal.getUserId().equals(userId))
+                .sorted(comparing(Meal::getDate, reverseOrder()))
                 .collect(Collectors.toList());
     }
 }
