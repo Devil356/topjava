@@ -7,3 +7,7 @@ log
 
 .DS_Store
 /patch/
+/.log
+/.properties
+/.script
+/.lck
