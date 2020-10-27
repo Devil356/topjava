@@ -1,7 +1,15 @@
 package ru.javawebinar.topjava.util.exception;
 
-public class NotFoundException extends RuntimeException {
+import java.util.function.Supplier;
+
+public class NotFoundException extends RuntimeException implements Supplier<String> {
+
     public NotFoundException(String message) {
         super(message);
+    }
+
+    @Override
+    public String get() {
+        return getMessage();
     }
 }

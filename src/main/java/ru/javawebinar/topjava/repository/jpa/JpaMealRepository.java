@@ -5,12 +5,14 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 @Repository
 @Transactional(readOnly = true)
@@ -22,20 +24,15 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        Objects.requireNonNull(meal, "meal must not be null");
-        User ref = em.getReference(User.class, userId);
+        if (!meal.isNew() && get(meal.getId(), userId) == null) {
+            return null;
+        }
+        meal.setUser(em.getReference(User.class, userId));
         if (meal.isNew()) {
-            meal.setUser(ref);
             em.persist(meal);
             return meal;
         } else {
-            User mealUser = meal.getUser();
-            if (mealUser.getId().equals(userId)) {
-                em.merge(meal);
-                return meal;
-            } else {
-                return null;
-            }
+            return em.merge(meal);
         }
     }
 
@@ -51,17 +48,16 @@ public class JpaMealRepository implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         Meal meal = em.find(Meal.class, id);
-        if (meal.getUser().getId().equals(userId)) {
-            return meal;
-        }
-        return null;
+        return meal != null && meal.getUser().getId() == userId ? meal : null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return em.createNamedQuery(Meal.GET_ALL, Meal.class)
+        List<Meal> meals = em.createNamedQuery(Meal.GET_ALL, Meal.class)
                 .setParameter("userId", userId)
                 .getResultList();
+        meals.forEach(meal -> meal.setUser(null));
+        return meals;
     }
 
     @Override
