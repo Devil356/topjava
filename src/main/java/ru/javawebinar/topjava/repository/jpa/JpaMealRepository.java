@@ -5,14 +5,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.util.Util;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional(readOnly = true)
@@ -24,9 +23,6 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        if (!meal.isNew() && get(meal.getId(), userId) == null) {
-            return null;
-        }
         meal.setUser(em.getReference(User.class, userId));
         if (meal.isNew()) {
             em.persist(meal);
@@ -47,21 +43,23 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = em.find(Meal.class, id);
-        return meal != null && meal.getUser().getId() == userId ? meal : null;
+        return getAll(userId).stream()
+                .filter(meal -> meal.getId().equals(id))
+                .findAny()
+                .orElse(null);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        List<Meal> meals = em.createNamedQuery(Meal.GET_ALL, Meal.class)
+        return em.createNamedQuery(Meal.GET_ALL, Meal.class)
                 .setParameter("userId", userId)
                 .getResultList();
-        meals.forEach(meal -> meal.setUser(null));
-        return meals;
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return null;
+        return getAll(userId).stream()
+                .filter(meal -> Util.isBetweenHalfOpen(meal.getDateTime(), startDateTime, endDateTime))
+                .collect(Collectors.toList());
     }
 }
