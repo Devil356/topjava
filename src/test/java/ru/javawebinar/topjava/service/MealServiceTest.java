@@ -1,6 +1,10 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -13,6 +17,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -30,6 +35,22 @@ public class MealServiceTest {
     @Autowired
     private MealService service;
 
+    private static final StringBuilder results = new StringBuilder();
+
+    @Rule
+    public final Stopwatch stopwatch = new Stopwatch(){
+        @Override
+        protected void finished(long nanos, Description description) {
+            String result = String.format("\n%-25s %7d", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            results.append(result);
+
+        }
+    };
+
+    @AfterClass
+    public static void printResult(){
+        System.out.println(results);
+    }
     @Test
     public void delete() throws Exception {
         service.delete(MEAL1_ID, USER_ID);
