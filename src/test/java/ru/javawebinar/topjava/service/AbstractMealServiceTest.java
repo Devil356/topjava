@@ -1,8 +1,11 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,6 +30,13 @@ public class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected MealService service;
+
+    @Autowired
+    private Environment environment;
+
+    public boolean isProfileJdbc(){
+        return environment.acceptsProfiles(Profiles.of(ru.javawebinar.topjava.Profiles.JDBC));
+    }
 
     @Test
     public void delete() {
@@ -110,6 +120,7 @@ public class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException(){
+        Assume.assumeTrue("Validate that is NOT JDBC implementation",!isProfileJdbc());
         validateRootCause(() -> service.create(new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "  ", 300), USER_ID), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new Meal(null, null, "Description", 300), USER_ID), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Description", 9), USER_ID), ConstraintViolationException.class);
