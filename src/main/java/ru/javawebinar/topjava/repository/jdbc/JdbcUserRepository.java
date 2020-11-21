@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.AbstractSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
@@ -39,7 +41,6 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User save(User user) {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
-
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
@@ -49,7 +50,19 @@ public class JdbcUserRepository implements UserRepository {
                 """, parameterSource) == 0) {
             return null;
         }
+//        deleteRoles(parameterSource, user);
+//        insertRoles(user);
         return user;
+    }
+
+//    public void deleteRoles(AbstractSqlParameterSource parameterSource, User user) {
+//        if (namedParameterJdbcTemplate.update("""
+//                UPDATE users SET """))
+//
+//    }
+
+    public void insertRoles(User user) {
+
     }
 
     @Override
