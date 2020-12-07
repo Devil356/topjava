@@ -1,5 +1,13 @@
 var ctx;
 
+function updateFilteredTable() {
+    $.ajax({
+        type: "GET",
+        url: "profile/meals/filter",
+        data: $("#filter").serialize()
+    }).done(updateTableByData);
+}
+
 $(function (){
     ctx = {
         ajaxUrl: "profile/meals/",
@@ -33,9 +41,7 @@ $(function (){
                 ]
             ]
         }),
-        updateTable: function (){
-            $.get("profile/meals/", updateTableByData(data))
-        }
+        updateTable: updateFilteredTable()
     };
     makeEditable();
 });
