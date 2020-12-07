@@ -11,7 +11,7 @@ function updateFilteredTable() {
 $(function (){
     ctx = {
         ajaxUrl: "profile/meals/",
-        datatableApi: $("#dataTable").DataTable({
+        datatableApi: $("#datatable").DataTable({
             "paging": false,
             "info": true,
             "columns": [
