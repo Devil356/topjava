@@ -4,7 +4,7 @@ function makeEditable() {
     form = $('#detailsForm');
     $(".delete").click(function () {
         if (confirm('Are you sure?')) {
-            deleteRow($(this).attr("id"));
+            deleteRow($(this).attr("id"));  //в скобках - возвращенное значение из метода
         }
     });
 
@@ -29,6 +29,10 @@ function deleteRow(id) {
         updateTable();
         successNoty("Deleted");
     });
+}
+
+function updateTableByData(data){
+    ctx.datatableApi.clear().rows.add(data).draw();
 }
 
 function updateTable() {
