@@ -41,7 +41,7 @@ $(function (){
                 ]
             ]
         }),
-        updateTable: updateFilteredTable()
+        updateTable: updateFilteredTable
     };
     makeEditable();
 });
