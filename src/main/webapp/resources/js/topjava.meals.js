@@ -1,4 +1,5 @@
 var ctx;
+var profileAjaxUrl = "profile/meals/";
 
 function updateFilteredTable() {
     $.ajax({
@@ -17,11 +18,18 @@ $(function () {
     ctx = {
         ajaxUrl: "profile/meals/",
         datatableApi: $("#datatable").DataTable({
+            "ajax": {
+                "url": profileAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime"
+                    "data": "dateTime",
+                    "render": function (data){
+                        return data.toString().replace("T", " ");
+                    }
                 },
                 {
                     "data": "description"
@@ -30,12 +38,14 @@ $(function () {
                     "data": "calories"
                 },
                 {
-                    "defaultContent": "Edit",
-                    "orderable": false
+                    "defaultContent": "",
+                    "orderable": false,
+                    "render": renderEditBtn
                 },
                 {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                    "defaultContent": "",
+                    "orderable": false,
+                    "render": renderDeleteBtn
                 }
             ],
             "order": [
