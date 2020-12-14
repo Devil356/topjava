@@ -1,7 +1,7 @@
 var ctx;
 var profileAjaxUrl = "profile/meals/";
 
-function updateFilteredTable() {
+function updateTable() {
     $.ajax({
         type: "GET",
         url: "profile/meals/filter",
@@ -27,7 +27,7 @@ $(function () {
             "columns": [
                 {
                     "data": "dateTime",
-                    "render": function (data){
+                    "render": function (data) {
                         return data.toString().replace("T", " ");
                     }
                 },
@@ -53,9 +53,18 @@ $(function () {
                     0,
                     "desc"
                 ]
-            ]
+            ],
+            "createdRow": function (row, data, dataIndex) {
+                $(row).addClass(data.excess ? 'exceeded' : 'normal');
+            },
+            "initComplete": function (data){
+                $('#filter').submit(function (){
+                    updateFilteredTable();
+                    console.log(data.toString());
+                });
+                makeEditable();
+            }
         }),
-        updateTable: updateFilteredTable
+
     };
-    makeEditable();
 });

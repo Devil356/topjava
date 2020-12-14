@@ -15,6 +15,10 @@ function enable(chkbox, id) {
     });
 }
 
+function updateTable(){
+    $.get(userAjaxUrl, updateTableByData);
+}
+
 // $(document).ready(function () {
 $(function () {
     // https://stackoverflow.com/a/5064235/548473
