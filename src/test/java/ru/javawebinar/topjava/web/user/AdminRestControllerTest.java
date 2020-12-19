@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.UserTestData;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -145,4 +146,25 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_WITH_MEALS_MATCHER.contentJson(admin));
     }
+    @Test
+    void createWithInvalid() throws Exception {
+        User invalid = new User(null,null,null,null,6000,Role.USER);
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(UserTestData.jsonWithPassword(invalid, "newPass")))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    void updateWithInvalid() throws Exception {
+        User invalid = new User(USER_ID,null,null,null,6000, Role.USER);
+        perform(MockMvcRequestBuilders.put(REST_URL+USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(UserTestData.jsonWithPassword(invalid, "newPass")))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
 }
